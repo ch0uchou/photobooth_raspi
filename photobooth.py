@@ -1,6 +1,7 @@
 import cv2
 import time
 import numpy as np
+import os
 import RPi.GPIO as GPIO
 
 # Initialize camera
@@ -19,6 +20,9 @@ GPIO.setup(24, GPIO.IN)
 # Load Haar cascades for face and nose
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 nose_cascade = cv2.CascadeClassifier('haarcascade_mcs_nose.xml')
+# Check if folder 'image' exists, if not create it
+if not os.path.exists('image'):
+    os.makedirs('image')
 
 # Function to add mustache to detected faces
 def mustachify(frame):
