@@ -60,5 +60,4 @@ GPIO.setup(24, GPIO.IN)
 
 while True:
     inputValue = GPIO.input(24)
-    if inputValue == True:
-        print(inputValue)
+    print(inputValue)
