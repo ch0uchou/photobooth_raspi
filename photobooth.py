@@ -31,7 +31,7 @@ if not os.path.exists("image"):
 
 
 # Function to add mustache to detected faces
-def mustachify(frame, sticker):
+def filterImage(frame, sticker):
     if sticker == 0:
         return frame
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -62,7 +62,7 @@ def mustachify(frame, sticker):
 def singlepost():
     _, frame = cap.read()
     frame = cv2.flip(frame, 1)
-    frame = mustachify(frame, switchValue)
+    frame = filterImage(frame, switchValue)
     cv2.imshow("photobooth", frame)
 
     if GPIO.input(23):
@@ -82,7 +82,7 @@ def post3x1():
     while counter != 3:
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
-        frame = mustachify(frame, switchValue)
+        frame = filterImage(frame, switchValue)
         roi = show_frame[
             counter * frame.shape[0] : counter * frame.shape[0] + frame.shape[0],
             0 : 0 + frame.shape[1],
@@ -108,9 +108,9 @@ def post2x2():
     _, frame = cap.read()
     show_frame = np.zeros([frame.shape[0] * 2, frame.shape[1] * 2, 3], dtype=np.uint8)
     while counter != 4:
-        ret, frame = cap.read()
+        _, frame = cap.read()
         frame = cv2.flip(frame, 1)
-        frame = mustachify(frame, switchValue)
+        frame = filterImage(frame, switchValue)
         roi = show_frame[
             counter // 2 * frame.shape[0] : counter // 2 * frame.shape[0]
             + frame.shape[0],
