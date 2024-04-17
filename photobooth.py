@@ -87,16 +87,15 @@ while True:
     if GPIO.input(24):
         switchValue += 1
         if switchValue > 2:
-            switchValue = 1
+            switchValue = 0
         cv2.waitKey(1000)
 
     if GPIO.input(25):
         typeValue += 1
         if typeValue > 2:
-            typeValue = 1
+            typeValue = 0
         cv2.waitKey(1000)
 
-    print(typeValue)
     if typeValue == 0:
         singlepost()
         
