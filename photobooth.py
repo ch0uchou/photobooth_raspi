@@ -49,9 +49,10 @@ while True:
     inputValue = GPIO.input(24)
     # inputValue = False
     if inputValue == True:
+        frame = cv2.flip(frame, 1)
         frame = mustachify(frame)
         cv2.imwrite("image/mustache-" + str(time.time()) + ".jpg", frame)
-        frame = cv2.flip(frame, 1)
+        print("Image saved")
         cv2.imshow('frame', frame)
         cv2.waitKey(3000)
     else:
