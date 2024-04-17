@@ -61,16 +61,17 @@ def singlepost():
         frame = mustachify(frame, switchValue)
         cv2.imwrite("image/singlepost-" + str(time.time()) + ".jpg", frame)
         print("Image saved")
-        cv2.imshow('frame', frame)
+        cv2.imshow('photobooth', frame)
         cv2.waitKey(3000)
     else:
         frame = cv2.flip(frame, 1)
-        cv2.imshow('frame', mustachify(frame, switchValue))
+        cv2.imshow('photobooth', mustachify(frame, switchValue))
 
 def post3x1():
     counter = 0
     ret, frame = cap.read()
     show_frame = np.zeros([frame.shape[0]*3, frame.shape[1], 3])
+    print(show_frame.shape)
     while counter != 3:
         ret, frame = cap.read()
         if GPIO.input(23):
@@ -79,14 +80,14 @@ def post3x1():
             frame = mustachify(frame, switchValue)
             cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", frame)
             print("Image saved")
-            cv2.imshow('3x1', frame)
+            cv2.imshow('photobooth', frame)
             cv2.waitKey(3000)
         else:
             frame = cv2.flip(frame, 1)
             frame = mustachify(frame, switchValue)
             roi = show_frame[0:frame.shape[0], 0:frame.shape[1]]
             roi += frame
-            cv2.imshow('3x1', show_frame)
+            cv2.imshow('photobooth', show_frame)
 
 # Main loop
 while True:
