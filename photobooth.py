@@ -56,6 +56,7 @@ while True:
         switchValue += 1
         if switchValue > 2:
             switchValue = 1
+        print(switchValue)
         cv2.waitKey(1000)
 
     if GPIO.input(23):
