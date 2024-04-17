@@ -67,7 +67,7 @@ def singlepost():
         frame = cv2.flip(frame, 1)
         cv2.imshow('frame', mustachify(frame, switchValue))
 
-def post3x1(frame):
+def post3x1():
     counter = 0
     ret, frame = cap.read()
     show_frame = np.zeros([frame.shape[0]*3, frame.shape[1]])
