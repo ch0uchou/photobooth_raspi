@@ -29,8 +29,8 @@ def mustachify(frame):
         for (nx, ny, nw, nh) in noses:
             # filter = cv2.resize(overlay_image, (w, h//2))
             # roi = frame[y-h//2+h//8:y+h//8, x:x+w]
-            filter = cv2.resize(overlay_image, (nw, nh))
-            roi = frame[ny:ny+nh, nx:nx+nw]
+            filter = cv2.resize(overlay_image, (2*nw, 2*nh))
+            roi = frame[ny+nh:ny+2*nh+nh, nx:nx+2*nw]
             if (roi.shape == filter.shape):
                 roi[np.where(filter)] = 0
                 roi += filter
