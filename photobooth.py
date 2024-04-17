@@ -12,12 +12,15 @@ cap.set(4, 240)  # Set height
 # Load mustache image
 overlay_image1 = cv2.imread('mustache.png')
 overlay_image2 = cv2.imread('hairband.png')
-switchValue = 1
+switchValue = 0
+typeValue = 0
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(23, GPIO.IN)
 GPIO.setup(24, GPIO.IN)
+GPIO.setup(25, GPIO.IN)
+
 
 # Load Haar cascades for face and nose
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -28,6 +31,8 @@ if not os.path.exists('image'):
 
 # Function to add mustache to detected faces
 def mustachify(frame, sticker):
+    if sticker == 0:
+        return frame
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray)
     for (x, y, w, h) in faces:
@@ -48,29 +53,54 @@ def mustachify(frame, sticker):
             break
         break
     return frame
-
-# Main loop
-while True:
+    
+def singlepost():
     ret, frame = cap.read()
-    if GPIO.input(24):
-        switchValue += 1
-        if switchValue > 2:
-            switchValue = 1
-        print(switchValue)
-        cv2.waitKey(1000)
-
     if GPIO.input(23):
         frame = cv2.flip(frame, 1)
         frame = mustachify(frame, switchValue)
-        cv2.imwrite("image/image-" + str(time.time()) + ".jpg", frame)
+        cv2.imwrite("image/singlepost-" + str(time.time()) + ".jpg", frame)
         print("Image saved")
         cv2.imshow('frame', frame)
         cv2.waitKey(3000)
     else:
         frame = cv2.flip(frame, 1)
         cv2.imshow('frame', mustachify(frame, switchValue))
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+
+def post3x3(frame):
+    counter = 0
+    while counter < 3:
+        ret, frame = cap.read()
+        if GPIO.input(23):
+            frame = cv2.flip(frame, 1)
+            frame = mustachify(frame, switchValue)
+            cv2.imwrite("image/post3x3-" + str(time.time()) + ".jpg", frame)
+            print("Image saved")
+            cv2.imshow('frame', frame)
+            cv2.waitKey(3000)
+        else:
+            frame = cv2.flip(frame, 1)
+            cv2.imshow('frame', mustachify(frame, switchValue))
+
+# Main loop
+while True:
+    if GPIO.input(24):
+        switchValue += 1
+        if switchValue > 2:
+            switchValue = 1
+        cv2.waitKey(1000)
+
+    if GPIO.input(25):
+        typeValue += 1
+        if typeValue > 2:
+            typeValue = 1
+        cv2.waitKey(1000)
+
+    if typeValue == 0:
+        singlepost()
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
 cap.release()
 cv2.destroyAllWindows()
