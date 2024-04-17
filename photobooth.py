@@ -12,6 +12,7 @@ cap.set(4, 240)  # Set height
 # Load mustache image
 overlay_image1 = cv2.imread('mustache.png')
 overlay_image2 = cv2.imread('hairband.png')
+switchValue = 1
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
@@ -51,7 +52,6 @@ def mustachify(frame, sticker):
 # Main loop
 while True:
     ret, frame = cap.read()
-    switchValue = 1
     if GPIO.input(24):
         switchValue += 1
         if switchValue > 2:
