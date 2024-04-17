@@ -81,12 +81,12 @@ def post3x1():
             frame = mustachify(frame, switchValue)
             cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", frame)
             print("Image saved")
-            cv2.imshow('photobooth', frame)
+            cv2.imshow('post3x1', frame)
             cv2.waitKey(3000)
         else:
             frame = cv2.flip(frame, 1)
             frame = mustachify(frame, switchValue)
-            cv2.imshow('photobooth', show_frame)
+            cv2.imshow('post3x1', show_frame)
 
 # Main loop
 while True:
