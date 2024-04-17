@@ -96,8 +96,10 @@ while True:
             typeValue = 1
         cv2.waitKey(1000)
 
+    print(typeValue)
     if typeValue == 0:
         singlepost()
+        
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
