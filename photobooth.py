@@ -72,6 +72,7 @@ def post3x1():
     ret, frame = cap.read()
     show_frame = np.zeros([frame.shape[0]*3, frame.shape[1], 3])
     print(show_frame.shape)
+    print(frame.shape)
     while counter != 3:
         ret, frame = cap.read()
         if GPIO.input(23):
@@ -85,8 +86,6 @@ def post3x1():
         else:
             frame = cv2.flip(frame, 1)
             frame = mustachify(frame, switchValue)
-            roi = show_frame[0:frame.shape[0], 0:frame.shape[1]]
-            roi += frame
             cv2.imshow('photobooth', show_frame)
 
 # Main loop
