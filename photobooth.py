@@ -10,8 +10,8 @@ cap.set(3, 320)  # Set width
 cap.set(4, 240)  # Set height
 
 # Load mustache image
-overlay_image1 = cv2.imread('mustache.png')
-overlay_image2 = cv2.imread('hairband.png')
+overlay_image1 = cv2.imread("mustache.png")
+overlay_image2 = cv2.imread("hairband.png")
 switchValue = 0
 typeValue = 0
 
@@ -23,11 +23,12 @@ GPIO.setup(25, GPIO.IN)
 
 
 # Load Haar cascades for face and nose
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-nose_cascade = cv2.CascadeClassifier('haarcascade_mcs_nose.xml')
+face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+nose_cascade = cv2.CascadeClassifier("haarcascade_mcs_nose.xml")
 # Check if folder 'image' exists, if not create it
-if not os.path.exists('image'):
-    os.makedirs('image')
+if not os.path.exists("image"):
+    os.makedirs("image")
+
 
 # Function to add mustache to detected faces
 def mustachify(frame, sticker):
@@ -35,62 +36,101 @@ def mustachify(frame, sticker):
         return frame
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray)
-    for (x, y, w, h) in faces:
+    for x, y, w, h in faces:
         noses = nose_cascade.detectMultiScale(gray)
-        for (nx, ny, nw, nh) in noses:
+        for nx, ny, nw, nh in noses:
             if sticker == 1:
                 overlay_image = overlay_image1
-                filter = cv2.resize(overlay_image, (2*nw, 2*nh))
-                roi = frame[ny-nh//3:ny+2*nh-nh//3, nx-nw//3:nx+2*nw-nw//3]
+                filter = cv2.resize(overlay_image, (2 * nw, 2 * nh))
+                roi = frame[
+                    ny - nh // 3 : ny + 2 * nh - nh // 3,
+                    nx - nw // 3 : nx + 2 * nw - nw // 3,
+                ]
             elif sticker == 2:
                 overlay_image = overlay_image2
-                filter = cv2.resize(overlay_image, (w, h//2))
-                roi = frame[y-h//2+h//8:y+h//8, x:x+w]
-            
-            if (roi.shape == filter.shape):
+                filter = cv2.resize(overlay_image, (w, h // 2))
+                roi = frame[y - h // 2 + h // 8 : y + h // 8, x : x + w]
+
+            if roi.shape == filter.shape:
                 roi[np.where(filter)] = 0
                 roi += filter
             break
         break
     return frame
-    
+
+
 def singlepost():
-    ret, frame = cap.read()
+    _, frame = cap.read()
+    frame = cv2.flip(frame, 1)
+    frame = mustachify(frame, switchValue)
+    cv2.imshow("photobooth", frame)
+
     if GPIO.input(23):
-        frame = cv2.flip(frame, 1)
-        frame = mustachify(frame, switchValue)
         cv2.imwrite("image/singlepost-" + str(time.time()) + ".jpg", frame)
         print("Image saved")
-        cv2.imshow('photobooth', frame)
         cv2.waitKey(3000)
-    else:
-        frame = cv2.flip(frame, 1)
-        cv2.imshow('photobooth', mustachify(frame, switchValue))
+
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        cap.release()
+        cv2.destroyAllWindows()
+
 
 def post3x1():
     counter = 0
-    ret, frame = cap.read()
-    show_frame = np.zeros([frame.shape[0]*3, frame.shape[1], 3])
-    print(show_frame.shape)
-    print(frame.shape)
+    _, frame = cap.read()
+    show_frame = np.zeros([frame.shape[0] * 3, frame.shape[1], 3], dtype=np.uint8)
     while counter != 3:
-        ret, frame = cap.read()
+        _, frame = cap.read()
+        frame = cv2.flip(frame, 1)
+        frame = mustachify(frame, switchValue)
+        roi = show_frame[
+            counter * frame.shape[0] : counter * frame.shape[0] + frame.shape[0],
+            0 : 0 + frame.shape[1],
+        ]
+        roi -= roi
+        roi += frame
+        cv2.imshow("post3x1", show_frame)
         if GPIO.input(23):
             counter += 1
-            frame = cv2.flip(frame, 1)
-            frame = mustachify(frame, switchValue)
-            cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", frame)
-            print("Image saved")
-            cv2.imshow('post3x1', frame)
-            cv2.waitKey(3000)
-        else:
-            frame = cv2.flip(frame, 1)
-            frame = mustachify(frame, switchValue)
-            show_frame+=frame
-            cv2.imshow('post3x1', show_frame)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            if counter == 3:
+                cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", show_frame)
+                print("Image saved")
+                cv2.waitKey(2000)
+            cv2.waitKey(1000)
+            
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            cap.release()
+            cv2.destroyAllWindows()
+
+
+def post2x2():
+    counter = 0
+    _, frame = cap.read()
+    show_frame = np.zeros([frame.shape[0] * 2, frame.shape[1] * 2, 3], dtype=np.uint8)
+    while counter != 4:
+        ret, frame = cap.read()
+        frame = cv2.flip(frame, 1)
+        frame = mustachify(frame, switchValue)
+        roi = show_frame[
+            counter // 2 * frame.shape[0] : counter // 2 * frame.shape[0]
+            + frame.shape[0],
+            counter % 2 * frame.shape[1] : counter % 2 * frame.shape[1]
+            + frame.shape[1],
+        ]
+        roi -= roi
+        roi += frame
+        cv2.imshow("post2x2", show_frame)
+        if GPIO.input(23):
+            counter += 1
+            if counter == 4:
+                cv2.imwrite("image/post2x2-" + str(time.time()) + ".jpg", show_frame)
+                print("Image saved")
+                cv2.waitKey(2000)
+            cv2.waitKey(1000)
+
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            cap.release()
+            cv2.destroyAllWindows()
 
 # Main loop
 while True:
@@ -111,10 +151,8 @@ while True:
 
     if typeValue == 1:
         post3x1()
-        
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    if typeValue == 2:
+        post2x2()
 
-cap.release()
-cv2.destroyAllWindows()
+
