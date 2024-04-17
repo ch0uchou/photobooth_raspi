@@ -70,7 +70,7 @@ def singlepost():
 def post3x1():
     counter = 0
     ret, frame = cap.read()
-    show_frame = np.zeros([frame.shape[0]*3, frame.shape[1]])
+    show_frame = np.zeros([frame.shape[0]*3, frame.shape[1], 3])
     while counter != 3:
         ret, frame = cap.read()
         if GPIO.input(23):
