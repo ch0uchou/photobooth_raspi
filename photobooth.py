@@ -67,20 +67,26 @@ def singlepost():
         frame = cv2.flip(frame, 1)
         cv2.imshow('frame', mustachify(frame, switchValue))
 
-def post3x3(frame):
+def post3x1(frame):
     counter = 0
-    while counter < 3:
+    ret, frame = cap.read()
+    show_frame = np.zeros([frame.shape[0]*3, frame.shape[1]])
+    while counter != 3:
         ret, frame = cap.read()
         if GPIO.input(23):
+            counter += 1
             frame = cv2.flip(frame, 1)
             frame = mustachify(frame, switchValue)
-            cv2.imwrite("image/post3x3-" + str(time.time()) + ".jpg", frame)
+            cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", frame)
             print("Image saved")
-            cv2.imshow('frame', frame)
+            cv2.imshow('3x1', frame)
             cv2.waitKey(3000)
         else:
             frame = cv2.flip(frame, 1)
-            cv2.imshow('frame', mustachify(frame, switchValue))
+            frame = mustachify(frame, switchValue)
+            roi = show_frame[0:frame.shape[0], 0:frame.shape[1]]
+            roi += frame
+            cv2.imshow('3x1', show_frame)
 
 # Main loop
 while True:
@@ -98,6 +104,9 @@ while True:
 
     if typeValue == 0:
         singlepost()
+
+    if typeValue == 1:
+        post3x1()
         
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
