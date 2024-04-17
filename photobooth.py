@@ -86,7 +86,10 @@ def post3x1():
         else:
             frame = cv2.flip(frame, 1)
             frame = mustachify(frame, switchValue)
-            cv2.imshow('post3x1', show_frame)
+            cv2.imshow('post3x1', frame)
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 # Main loop
 while True:
