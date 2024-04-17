@@ -9,7 +9,7 @@ cap.set(3, 320)  # Set width
 cap.set(4, 240)  # Set height
 
 # Load mustache image
-overlay_image = cv2.imread('hairband.png')
+overlay_image = cv2.imread('mustache.png')
 
 
 # Set up GPIO
@@ -27,8 +27,10 @@ def mustachify(frame):
     for (x, y, w, h) in faces:
         noses = nose_cascade.detectMultiScale(gray)
         for (nx, ny, nw, nh) in noses:
-            filter = cv2.resize(overlay_image, (w, h//2))
-            roi = frame[y-h//2+h//8:y+h//8, x:x+w]
+            # filter = cv2.resize(overlay_image, (w, h//2))
+            # roi = frame[y-h//2+h//8:y+h//8, x:x+w]
+            filter = cv2.resize(overlay_image, (nw, nh))
+            roi = frame[ny:ny+nh, nx:nx+nw]
             if (roi.shape == filter.shape):
                 roi[np.where(filter)] = 0
                 roi += filter
