@@ -17,10 +17,22 @@ typeValue = 0
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.IN)
 GPIO.setup(23, GPIO.IN)
 GPIO.setup(24, GPIO.IN)
 GPIO.setup(25, GPIO.IN)
 
+
+# Load Haar cascades for face and nose
+overlay_image1 = cv2.imread("mustache.png", cv2.IMREAD_UNCHANGED)
+overlay_image2 = cv2.imread("hairband.png", cv2.IMREAD_UNCHANGED)
+overlay_image3 = cv2.imread("jiwon.png", cv2.IMREAD_UNCHANGED)
+overlay_image4 = cv2.imread("soohuyn.png", cv2.IMREAD_UNCHANGED)
+overlay_image5 = cv2.imread("heart.png", cv2.IMREAD_UNCHANGED)
+overlay_image6 = cv2.imread("flower.png", cv2.IMREAD_UNCHANGED)
+
+switchValue = 2
+typeValue = 1
 
 # Load Haar cascades for face and nose
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
@@ -30,33 +42,62 @@ if not os.path.exists("image"):
     os.makedirs("image")
 
 
-# Function to add mustache to detected faces
+# Function to filter image
 def filterImage(frame, sticker):
-    if sticker == 0:
-        return frame
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray)
-    for x, y, w, h in faces:
-        noses = nose_cascade.detectMultiScale(gray)
-        for nx, ny, nw, nh in noses:
-            if sticker == 1:
-                overlay_image = overlay_image1
-                filter = cv2.resize(overlay_image, (2 * nw, 2 * nh))
-                roi = frame[
-                    ny - nh // 3 : ny + 2 * nh - nh // 3,
-                    nx - nw // 3 : nx + 2 * nw - nw // 3,
-                ]
-            elif sticker == 2:
-                overlay_image = overlay_image2
-                filter = cv2.resize(overlay_image, (w, h // 2))
-                roi = frame[y - h // 2 + h // 8 : y + h // 8, x : x + w]
+    try:
+        if sticker == 0:
+            return frame
+        elif sticker == 3:
+            overlay_image = overlay_image3
+            filter = cv2.resize(overlay_image, (480, 480))
+            mask = filter[:, :, 3] == 255
+            frame[0:480, 0:480][mask] = filter[:, :, :3][mask]
+            return frame
+        elif sticker == 4:
+            overlay_image = overlay_image4
+            filter = cv2.resize(overlay_image, (480, 480))
+            mask = filter[:, :, 3] == 255
+            frame[-480:, -480:][mask] = filter[:, :, :3][mask]
+            return frame
+        elif sticker == 6:
+            overlay_image = overlay_image6
+            filter = cv2.resize(overlay_image, (640, 480))
+            mask = filter[:, :, 3] == 255
+            frame[0:480:, 0:640][mask] = filter[:, :, :3][mask]
+            return frame
 
-            if roi.shape == filter.shape:
-                roi[np.where(filter)] = 0
-                roi += filter
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray)
+        for x, y, w, h in faces:
+            noses = nose_cascade.detectMultiScale(gray)
+            for nx, ny, nw, nh in noses:
+                if sticker == 1:
+                    overlay_image = overlay_image1
+                    filter = cv2.resize(overlay_image, (2 * nw, 2 * nh))
+                    mask = filter[:, :, 3] == 255
+                    frame[
+                        ny - nh // 3 : ny + 2 * nh - nh // 3,
+                        nx - nw // 3 : nx + 2 * nw - nw // 3,
+                    ][mask] = filter[:, :, :3][mask]
+                elif sticker == 2:
+                    overlay_image = overlay_image2
+                    filter = cv2.resize(overlay_image, (w, h // 2))
+                    mask = filter[:, :, 3] == 255
+                    frame[y - h // 2 + h // 8 : y + h // 8, x : x + w][mask] = filter[
+                        :, :, :3
+                    ][mask]
+                elif sticker == 5:
+                    overlay_image = overlay_image5
+                    filter = cv2.resize(overlay_image, (w, h // 2))
+                    mask = filter[:, :, 3] == 255
+                    frame[y - h // 2 + h // 8 : y + h // 8, x : x + w][mask] = filter[
+                        :, :, :3
+                    ][mask]
+                break
             break
-        break
-    return frame
+        return frame
+    except:
+        return frame
 
 
 def singlepost():
@@ -65,7 +106,7 @@ def singlepost():
     frame = filterImage(frame, switchValue)
     cv2.imshow("photobooth", frame)
 
-    if GPIO.input(23):
+    if GPIO.input(18):
         cv2.imwrite("image/singlepost-" + str(time.time()) + ".jpg", frame)
         print("Image saved")
         cv2.waitKey(3000)
@@ -80,6 +121,7 @@ def post3x1():
     _, frame = cap.read()
     show_frame = np.zeros([frame.shape[0] * 3, frame.shape[1], 3], dtype=np.uint8)
     while counter != 3:
+        checkbutton()
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
@@ -90,14 +132,14 @@ def post3x1():
         roi -= roi
         roi += frame
         cv2.imshow("post3x1", show_frame)
-        if GPIO.input(23):
+        if GPIO.input(18):
             counter += 1
             if counter == 3:
                 cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", show_frame)
                 print("Image saved")
                 cv2.waitKey(2000)
             cv2.waitKey(1000)
-            
+
         if cv2.waitKey(1) & 0xFF == ord("q"):
             cap.release()
             cv2.destroyAllWindows()
@@ -108,6 +150,7 @@ def post2x2():
     _, frame = cap.read()
     show_frame = np.zeros([frame.shape[0] * 2, frame.shape[1] * 2, 3], dtype=np.uint8)
     while counter != 4:
+        checkbutton()
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
@@ -120,7 +163,7 @@ def post2x2():
         roi -= roi
         roi += frame
         cv2.imshow("post2x2", show_frame)
-        if GPIO.input(23):
+        if GPIO.input(18):
             counter += 1
             if counter == 4:
                 cv2.imwrite("image/post2x2-" + str(time.time()) + ".jpg", show_frame)
@@ -132,11 +175,17 @@ def post2x2():
             cap.release()
             cv2.destroyAllWindows()
 
-# Main loop
-while True:
+
+def checkbutton():
+    if GPIO.input(23):
+        switchValue -= 1
+        if switchValue < 0:
+            switchValue = 6
+        cv2.waitKey(1000)
+
     if GPIO.input(24):
         switchValue += 1
-        if switchValue > 2:
+        if switchValue > 6:
             switchValue = 0
         cv2.waitKey(1000)
 
@@ -146,6 +195,11 @@ while True:
             typeValue = 0
         cv2.waitKey(1000)
 
+
+# Main loop
+while True:
+    checkbutton()
+
     if typeValue == 0:
         singlepost()
 
@@ -154,5 +208,3 @@ while True:
 
     if typeValue == 2:
         post2x2()
-
-
