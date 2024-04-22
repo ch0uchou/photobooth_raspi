@@ -9,9 +9,6 @@ cap = cv2.VideoCapture(0)
 cap.set(3, 320)  # Set width
 cap.set(4, 240)  # Set height
 
-# Load mustache image
-overlay_image1 = cv2.imread("mustache.png")
-overlay_image2 = cv2.imread("hairband.png")
 switchValue = 0
 typeValue = 0
 
