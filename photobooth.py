@@ -31,8 +31,6 @@ overlay_image4 = cv2.imread("soohuyn.png", cv2.IMREAD_UNCHANGED)
 overlay_image5 = cv2.imread("heart.png", cv2.IMREAD_UNCHANGED)
 overlay_image6 = cv2.imread("flower.png", cv2.IMREAD_UNCHANGED)
 
-switchValue = 2
-typeValue = 1
 
 # Load Haar cascades for face and nose
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
