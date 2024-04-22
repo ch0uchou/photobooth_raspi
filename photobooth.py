@@ -9,9 +9,11 @@ cap = cv2.VideoCapture(0)
 cap.set(3, 320)  # Set width
 cap.set(4, 240)  # Set height
 
+# Load mustache image
+overlay_image1 = cv2.imread("mustache.png")
+overlay_image2 = cv2.imread("hairband.png")
 switchValue = 0
 typeValue = 0
-counter_3x3 = 0
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
@@ -113,22 +115,23 @@ def singlepost():
 
 
 def post3x1():
+    counter = 0
     _, frame = cap.read()
     show_frame = np.zeros([frame.shape[0] * 3, frame.shape[1], 3], dtype=np.uint8)
-    while counter_3x3 != 3:
+    while counter != 3:
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
         roi = show_frame[
-            counter_3x3 * frame.shape[0] : counter_3x3 * frame.shape[0] + frame.shape[0],
+            counter * frame.shape[0] : counter * frame.shape[0] + frame.shape[0],
             0 : 0 + frame.shape[1],
         ]
         roi -= roi
         roi += frame
         cv2.imshow("photobooth", show_frame)
         if GPIO.input(18):
-            counter_3x3 += 1
-            if counter_3x3 == 3:
+            counter += 1
+            if counter == 3:
                 cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", show_frame)
                 print("Image saved")
                 cv2.waitKey(2000)
@@ -169,6 +172,7 @@ def post2x2():
             cv2.destroyAllWindows()
 
 
+
 # Main loop
 while True:
     if GPIO.input(23):
@@ -189,12 +193,11 @@ while True:
             typeValue = 0
         cv2.waitKey(1000)
 
+    if typeValue == 0:
+        singlepost()
 
-    # if typeValue == 0:
-    #     singlepost()
+    if typeValue == 1:
+        post3x1()
 
-    # if typeValue == 1:
-    #     post3x1()
-
-    # if typeValue == 2:
-    #     post2x2()
+    if typeValue == 2:
+        post2x2()
