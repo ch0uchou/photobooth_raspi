@@ -121,7 +121,6 @@ def post3x1():
     _, frame = cap.read()
     show_frame = np.zeros([frame.shape[0] * 3, frame.shape[1], 3], dtype=np.uint8)
     while counter != 3:
-        checkbutton()
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
@@ -131,7 +130,7 @@ def post3x1():
         ]
         roi -= roi
         roi += frame
-        cv2.imshow("post3x1", show_frame)
+        cv2.imshow("photobooth", show_frame)
         if GPIO.input(18):
             counter += 1
             if counter == 3:
@@ -150,7 +149,6 @@ def post2x2():
     _, frame = cap.read()
     show_frame = np.zeros([frame.shape[0] * 2, frame.shape[1] * 2, 3], dtype=np.uint8)
     while counter != 4:
-        checkbutton()
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
@@ -162,7 +160,7 @@ def post2x2():
         ]
         roi -= roi
         roi += frame
-        cv2.imshow("post2x2", show_frame)
+        cv2.imshow("photobooth", show_frame)
         if GPIO.input(18):
             counter += 1
             if counter == 4:
