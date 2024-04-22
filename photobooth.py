@@ -173,6 +173,7 @@ def post2x2():
 
 
 def checkbutton():
+    print(switchValue)
     if GPIO.input(23):
         switchValue -= 1
         if switchValue < 0:
@@ -199,8 +200,8 @@ while True:
     if typeValue == 0:
         singlepost()
 
-    if typeValue == 1:
-        post3x1()
+    # if typeValue == 1:
+    #     post3x1()
 
-    if typeValue == 2:
-        post2x2()
+    # if typeValue == 2:
+    #     post2x2()
