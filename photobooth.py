@@ -218,11 +218,12 @@ while True:
         cap_count += 1
         cv2.waitKey(1000)
 
-    if typeValue == 0:
-        singlepost()
+    print(switchValue, typeValue, cap_count)
+    # if typeValue == 0:
+    #     singlepost()
 
-    if typeValue == 1:
-        post3x1()
+    # if typeValue == 1:
+    #     post3x1()
 
     # if typeValue == 2:
     #     post2x2()
