@@ -169,7 +169,8 @@ GPIO.setup(25, GPIO.IN)
 #             cv2.destroyAllWindows()
 
 
-def checkbutton():
+# Main loop
+while True:
     print(switchValue, typeValue)
     if GPIO.input(23):
         switchValue -= 1
@@ -189,10 +190,6 @@ def checkbutton():
             typeValue = 0
         cv2.waitKey(1000)
 
-
-# Main loop
-while True:
-    checkbutton()
 
     # if typeValue == 0:
     #     singlepost()
