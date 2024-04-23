@@ -17,6 +17,7 @@ typeValue = 0
 
 # Set up GPIO
 GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.IN)
 GPIO.setup(23, GPIO.IN)
 GPIO.setup(24, GPIO.IN)
 GPIO.setup(25, GPIO.IN)
