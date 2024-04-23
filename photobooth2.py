@@ -55,32 +55,49 @@ def mustachify(frame, sticker):
     return frame
     
 def singlepost():
-    ret, frame = cap.read()
-    if GPIO.input(23):
-        frame = cv2.flip(frame, 1)
-        frame = mustachify(frame, switchValue)
-        cv2.imwrite("image/singlepost-" + str(time.time()) + ".jpg", frame)
+    _, frame = cap.read()
+    frame = cv2.flip(frame, 1)
+    frame = filterImage(frame, switchValue)
+    cv2.imshow("photobooth", frame)
+    if GPIO.input(18):
+        cv2.imwrite("image/single-" + str(time.time()) + ".jpg", frame)
         print("Image saved")
-        cv2.imshow('frame', frame)
-        cv2.waitKey(3000)
-    else:
-        frame = cv2.flip(frame, 1)
-        cv2.imshow('frame', mustachify(frame, switchValue))
+        cv2.waitKey(2000)
 
-def post3x3(frame):
+def post3x1():
     counter = 0
-    while counter < 3:
-        ret, frame = cap.read()
-        if GPIO.input(23):
-            frame = cv2.flip(frame, 1)
-            frame = mustachify(frame, switchValue)
-            cv2.imwrite("image/post3x3-" + str(time.time()) + ".jpg", frame)
-            print("Image saved")
-            cv2.imshow('frame', frame)
-            cv2.waitKey(3000)
-        else:
-            frame = cv2.flip(frame, 1)
-            cv2.imshow('frame', mustachify(frame, switchValue))
+    _, frame = cap.read()
+    show_frame = np.zeros([frame.shape[0] * 3, frame.shape[1], 3], dtype=np.uint8)
+    frame = cv2.flip(frame, 1)
+    frame = filterImage(frame, switchValue)
+    roi = show_frame[
+        counter * frame.shape[0] : counter * frame.shape[0] + frame.shape[0],
+        0 : 0 + frame.shape[1],
+    ]
+    roi -= roi
+    roi += frame
+    cv2.imshow("photobooth", show_frame)
+    if GPIO.input(18):
+        counter += 1
+        cv2.waitKey(1000)
+    while counter >= 1 and counter <= 3:
+        _, frame = cap.read()
+        frame = cv2.flip(frame, 1)
+        frame = filterImage(frame, switchValue)
+        roi = show_frame[
+            counter * frame.shape[0] : counter * frame.shape[0] + frame.shape[0],
+            0 : 0 + frame.shape[1],
+        ]
+        roi -= roi
+        roi += frame
+        cv2.imshow("photobooth", show_frame)
+        if GPIO.input(18):
+            counter += 1
+            if counter == 3:
+                cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", show_frame)
+                print("Image saved")
+                counter = 0
+            cv2.waitKey(1000)
 
 # Main loop
 while True:
@@ -98,6 +115,9 @@ while True:
 
     if typeValue == 0:
         singlepost()
+
+    if typeValue == 1:
+        post3x1()
         
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
