@@ -193,16 +193,16 @@ while True:
             typeValue = 0
         cv2.waitKey(1500)
 
-    # print(GPIO.input(18), GPIO.input(23), GPIO.input(24), GPIO.input(25))
+    print(GPIO.input(18), GPIO.input(23), GPIO.input(24), GPIO.input(25))
 
-    if typeValue == 0:
-        singlepost()
+    # if typeValue == 0:
+    #     singlepost()
 
-    if typeValue == 1:
-        post3x1()
+    # if typeValue == 1:
+    #     post3x1()
 
-    if typeValue == 2:
-        post2x2()
+    # if typeValue == 2:
+    #     post2x2()
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
