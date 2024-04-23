@@ -156,12 +156,12 @@ while True:
     if GPIO.input(23):
         switchValue -= 1
         if switchValue < 0:
-            switchValue = 5
+            switchValue = 2
         cv2.waitKey(1500)
 
     if GPIO.input(24):
         switchValue += 1
-        if switchValue > 5:
+        if switchValue > 2:
             switchValue = 0
         cv2.waitKey(1500)
 
