@@ -51,7 +51,7 @@ def filterImage(frame, sticker):
                         ny - nh // 3 : ny + 2 * nh - nh // 3,
                         nx - nw // 3 : nx + 2 * nw - nw // 3,
                     ][mask] = filter[:, :, :3][mask]
-                elif sticker == 1:
+                # elif sticker == 1:
                     overlay_image = overlay_image2
                     filter = cv2.resize(overlay_image, (w, h // 2))
                     mask = filter[:, :, 3] == 255
