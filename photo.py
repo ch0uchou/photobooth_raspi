@@ -170,7 +170,7 @@ while True:
         if typeValue > 2:
             typeValue = 0
         cv2.waitKey(1500)
-
+    print(typeValue)
     if typeValue == 0:
         singlepost()
 
