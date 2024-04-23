@@ -30,7 +30,7 @@ if not os.path.exists('image'):
     os.makedirs('image')
 
 # Function to add mustache to detected faces
-def mustachify(frame, sticker):
+def filterImage(frame, sticker):
     if sticker == 0:
         return frame
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
