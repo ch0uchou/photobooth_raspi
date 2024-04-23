@@ -93,6 +93,7 @@ def post3x1():
         counter += 1
         cv2.waitKey(1000)
     while counter >= 1 and counter <= 3:
+        print(counter)
         _, frame = cap.read()
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
