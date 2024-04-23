@@ -58,8 +58,6 @@ def filterImage(frame, sticker):
                     frame[y - h // 2 + h // 8 : y + h // 8, x : x + w][mask] = filter[
                         :, :, :3
                     ][mask]
-                break
-            break
         return frame
     except:
         return frame
