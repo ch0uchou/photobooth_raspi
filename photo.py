@@ -97,7 +97,7 @@ def post3x1():
         frame = cv2.flip(frame, 1)
         frame = filterImage(frame, switchValue)
         roi = show_frame[
-            (counter+1) * frame.shape[0] : (counter+1) * frame.shape[0] + frame.shape[0],
+            counter * frame.shape[0] : counter * frame.shape[0] + frame.shape[0],
             0 : 0 + frame.shape[1],
         ]
         roi -= roi
