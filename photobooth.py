@@ -25,8 +25,8 @@ overlay_image3 = cv2.imread("jiwon.png", cv2.IMREAD_UNCHANGED)
 overlay_image4 = cv2.imread("soohuyn.png", cv2.IMREAD_UNCHANGED)
 overlay_image5 = cv2.imread("flower.png", cv2.IMREAD_UNCHANGED)
 
-switchValue = 3
-typeValue = 1
+switchValue = 0
+typeValue = 0
 
 # Load Haar cascades for face and nose
 face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
@@ -92,7 +92,8 @@ def singlepost():
     frame = cv2.flip(frame, 1)
     frame = filterImage(frame, switchValue)
     cv2.imshow("photobooth", frame)
-    if GPIO.input(18):
+    # if GPIO.input(18):
+    if cv2.waitKey(1) & 0xFF == ord("d"):
         cv2.imwrite("image/single-" + str(time.time()) + ".jpg", frame)
         print("Image saved")
         cv2.waitKey(2000)
@@ -111,7 +112,8 @@ def post3x1():
     roi -= roi
     roi += frame
     cv2.imshow("photobooth", show_frame)
-    if GPIO.input(18):
+    # if GPIO.input(18):
+    if cv2.waitKey(1) & 0xFF == ord("d"):
         counter += 1
         cv2.waitKey(1000)
     while counter >= 1 and counter <= 3:
@@ -125,7 +127,8 @@ def post3x1():
         roi -= roi
         roi += frame
         cv2.imshow("photobooth", show_frame)
-        if GPIO.input(18):
+        # if GPIO.input(18):
+        if cv2.waitKey(1) & 0xFF == ord("d"):
             counter += 1
             if counter == 3:
                 cv2.imwrite("image/post3x1-" + str(time.time()) + ".jpg", show_frame)
@@ -147,7 +150,8 @@ def post2x2():
     roi -= roi
     roi += frame
     cv2.imshow("photobooth", show_frame)
-    if GPIO.input(18):
+    # if GPIO.input(18):
+    if cv2.waitKey(1) & 0xFF == ord("d"):
         counter += 1
         cv2.waitKey(1000)
     while counter >= 1 and counter <= 4:
@@ -163,7 +167,8 @@ def post2x2():
         roi -= roi
         roi += frame
         cv2.imshow("photobooth", show_frame)
-        if GPIO.input(18):
+        # if GPIO.input(18):
+        if cv2.waitKey(1) & 0xFF == ord("d"):
             counter += 1
             if counter == 4:
                 cv2.imwrite("image/post2x2-" + str(time.time()) + ".jpg", show_frame)
@@ -176,33 +181,36 @@ def post2x2():
 # Main loop
 while True:
     if GPIO.input(23):
+    # if cv2.waitKey(1) & 0xFF == ord("a"):
         switchValue -= 1
         if switchValue < 0:
             switchValue = 5
         cv2.waitKey(1500)
 
     if GPIO.input(24):
+    # if cv2.waitKey(1) & 0xFF == ord("b"):
         switchValue += 1
         if switchValue > 5:
             switchValue = 0
         cv2.waitKey(1500)
 
     if GPIO.input(25):
+    # if cv2.waitKey(1) & 0xFF == ord("c"):
         typeValue += 1
         if typeValue > 2:
             typeValue = 0
         cv2.waitKey(1500)
 
-    print(GPIO.input(18), GPIO.input(23), GPIO.input(24), GPIO.input(25))
+    # print(GPIO.input(18), GPIO.input(23), GPIO.input(24), GPIO.input(25))
 
-    # if typeValue == 0:
-    #     singlepost()
+    if typeValue == 0:
+        singlepost()
 
-    # if typeValue == 1:
-    #     post3x1()
+    if typeValue == 1:
+        post3x1()
 
-    # if typeValue == 2:
-    #     post2x2()
+    if typeValue == 2:
+        post2x2()
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
