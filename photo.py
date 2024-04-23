@@ -153,32 +153,33 @@ def post2x2():
 
 # Main loop
 while True:
-    if GPIO.input(23):
-        switchValue -= 1
-        if switchValue < 0:
-            switchValue = 5
-        cv2.waitKey(1500)
+    print(GPIO.input(18))
+    # if GPIO.input(23):
+    #     switchValue -= 1
+    #     if switchValue < 0:
+    #         switchValue = 5
+    #     cv2.waitKey(1500)
 
-    if GPIO.input(24):
-        switchValue += 1
-        if switchValue > 5:
-            switchValue = 0
-        cv2.waitKey(1500)
+    # if GPIO.input(24):
+    #     switchValue += 1
+    #     if switchValue > 5:
+    #         switchValue = 0
+    #     cv2.waitKey(1500)
 
-    if GPIO.input(25):
-        typeValue += 1
-        if typeValue > 2:
-            typeValue = 0
-        cv2.waitKey(1500)
+    # if GPIO.input(25):
+    #     typeValue += 1
+    #     if typeValue > 2:
+    #         typeValue = 0
+    #     cv2.waitKey(1500)
 
-    if typeValue == 0:
-        singlepost()
+    # if typeValue == 0:
+    #     singlepost()
 
-    if typeValue == 1:
-        post3x1()
+    # if typeValue == 1:
+    #     post3x1()
 
-    if typeValue == 2:
-        post2x2()
+    # if typeValue == 2:
+    #     post2x2()
 
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
